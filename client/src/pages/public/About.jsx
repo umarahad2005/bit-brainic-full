@@ -83,7 +83,7 @@ const About = () => {
                     >
                         <div className="aspect-square rounded-2xl bg-gradient-to-br from-[var(--accent)] to-purple-600 p-1">
                             <div className="w-full h-full rounded-xl bg-secondary flex items-center justify-center">
-                                <img src="/logo.png" alt="Bit Brainic" className="w-32 h-32" />
+                                <img src="/log.jpeg" alt="Bit Brainic" className="w-32 h-32" />
                             </div>
                         </div>
                         <div className="absolute -bottom-4 -right-4 w-24 h-24 accent-bg rounded-xl flex items-center justify-center text-white">
@@ -149,6 +149,71 @@ const About = () => {
                                 <div className="text-secondary">{stat.label}</div>
                             </motion.div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Developers */}
+            <section className="py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-3xl font-bold text-center mb-4"
+                    >
+                        Meet the <span className="gradient-text">Developers</span>
+                    </motion.h2>
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 }}
+                        className="text-secondary text-center mb-12 max-w-2xl mx-auto"
+                    >
+                        The passionate minds behind Bit Brainic
+                    </motion.p>
+
+                    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        {/* Developer 1 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="card text-center"
+                        >
+                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[var(--accent)] to-purple-600 p-1 mx-auto mb-4">
+                                <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-4xl font-bold text-[var(--accent)]">
+                                    U
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold mb-1">Umar Ahad Uddin Ahmed Usmani</h3>
+                            <p className="text-[var(--accent)] font-medium mb-3">Lead Developer</p>
+                            <p className="text-secondary text-sm">
+                                Full-stack developer passionate about creating innovative AI-powered educational tools.
+                            </p>
+                        </motion.div>
+
+                        {/* Developer 2 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
+                            className="card text-center"
+                        >
+                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[var(--accent)] to-purple-600 p-1 mx-auto mb-4">
+                                <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-4xl font-bold text-[var(--accent)]">
+                                    S
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold mb-1">Syed Hassan Raza</h3>
+                            <p className="text-[var(--accent)] font-medium mb-3">Co-Developer</p>
+                            <p className="text-secondary text-sm">
+                                Passionate developer focused on building user-friendly and engaging applications.
+                            </p>
+                        </motion.div>
                     </div>
                 </div>
             </section>

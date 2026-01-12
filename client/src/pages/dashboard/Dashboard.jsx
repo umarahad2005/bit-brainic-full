@@ -71,6 +71,19 @@ const Dashboard = () => {
         },
         onSuccess: (data) => {
             setMessages((prev) => [...prev, data.userMessage, data.botMessage]);
+
+            // Update the chat title in the cache if it changed
+            if (data.chatTitle) {
+                queryClient.setQueryData(['chats'], (oldChats) => {
+                    if (!oldChats) return oldChats;
+                    return oldChats.map(chat =>
+                        chat._id === currentChatId
+                            ? { ...chat, title: data.chatTitle }
+                            : chat
+                    );
+                });
+            }
+
             queryClient.invalidateQueries({ queryKey: ['chats'] });
             setIsTyping(false);
         },

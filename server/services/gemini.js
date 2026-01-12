@@ -1,5 +1,4 @@
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import { GoogleGenAI } from '@google/genai';
 
 // BitBraniac System Prompt
 const SYSTEM_PROMPT = `
@@ -61,19 +60,17 @@ Always keep your responses **educational, engaging, and fun** while staying stri
 // Maximum messages to keep in history (30 messages = 15 exchanges)
 const MAX_HISTORY_MESSAGES = 30;
 
-// Lazy initialization of the model
-let _model = null;
+// Lazy initialization of the AI client
+let _ai = null;
 
-const getModel = () => {
-    if (!_model) {
-        _model = new ChatGoogleGenerativeAI({
-            model: 'gemini-1.5-flash',
-            apiKey: process.env.GEMINI_API_KEY,
-            maxOutputTokens: 2048,
-            temperature: 0.7,
-        });
+const getAI = () => {
+    if (!_ai) {
+        if (!process.env.GEMINI_API_KEY) {
+            throw new Error('GEMINI_API_KEY environment variable is not set');
+        }
+        _ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     }
-    return _model;
+    return _ai;
 };
 
 /**
@@ -90,49 +87,90 @@ const trimChatHistory = (messages) => {
 };
 
 /**
- * Convert database messages to LangChain message format
+ * Convert database messages to Gemini chat format
  * @param {Array} messages - Array of messages from database
- * @returns {Array} - Array of LangChain message objects
+ * @returns {Array} - Array of Gemini message objects
  */
-const convertToLangChainMessages = (messages) => {
-    // Start with system message
-    const langChainMessages = [new SystemMessage(SYSTEM_PROMPT)];
-
-    // Add chat history
-    for (const msg of messages) {
-        if (msg.role === 'user') {
-            langChainMessages.push(new HumanMessage(msg.content));
-        } else if (msg.role === 'bot') {
-            langChainMessages.push(new AIMessage(msg.content));
-        }
-    }
-
-    return langChainMessages;
+const convertToGeminiHistory = (messages) => {
+    return messages.map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.content }]
+    }));
 };
 
 /**
- * Generate AI response using LangChain and Gemini
+ * Generate AI response using Google Generative AI (new SDK)
  * @param {Array} messages - Array of message objects with role and content
+ * @param {number} retryCount - Current retry attempt
  * @returns {Promise<string>} - AI generated response
  */
-const generateResponse = async (messages) => {
+const generateResponse = async (messages, retryCount = 0) => {
+    const MAX_RETRIES = 3;
+    const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash']; // Fallback models
+
     try {
-        const model = getModel();
+        const ai = getAI();
 
         // Trim history to last 30 messages
         const trimmedMessages = trimChatHistory(messages);
 
-        // Convert to LangChain format
-        const langChainMessages = convertToLangChainMessages(trimmedMessages);
+        if (trimmedMessages.length === 0) {
+            throw new Error('No messages to process');
+        }
 
-        console.log('Sending message to Gemini with', langChainMessages.length, 'messages in context');
+        // Get the last user message
+        const lastMessage = trimmedMessages[trimmedMessages.length - 1];
 
-        // Generate response
-        const response = await model.invoke(langChainMessages);
+        if (lastMessage.role !== 'user') {
+            throw new Error('Last message must be from user');
+        }
 
-        return response.content;
+        // Convert all messages to Gemini history format, excluding the last one
+        const history = convertToGeminiHistory(trimmedMessages.slice(0, -1));
+
+        // Select model based on retry count
+        const modelIndex = Math.min(Math.floor(retryCount / 2), MODELS.length - 1);
+        const selectedModel = MODELS[modelIndex];
+
+        console.log(`Sending message to Gemini (${selectedModel}) with`, history.length, 'messages in history');
+
+        // Create a chat session with history using new SDK
+        const chat = ai.chats.create({
+            model: selectedModel,
+            history: history,
+            config: {
+                systemInstruction: SYSTEM_PROMPT,
+                maxOutputTokens: 8192,
+                temperature: 0.8,
+            },
+        });
+
+        // Send the last user message
+        const response = await chat.sendMessage({
+            message: lastMessage.content
+        });
+
+        return response.text;
     } catch (error) {
-        console.error('LangChain Gemini API Error:', error.message);
+        console.error('Gemini API Error:', error.message);
+
+        // Check for retryable errors (503, 429, overloaded)
+        const errorStatus = error.status || error.statusCode;
+        const errorMessage = typeof error.message === 'string' ? error.message : JSON.stringify(error.message);
+
+        const isRetryable = errorStatus === 503 || errorStatus === 429 ||
+            errorMessage?.includes('503') ||
+            errorMessage?.includes('429') ||
+            errorMessage?.includes('overloaded') ||
+            errorMessage?.includes('UNAVAILABLE') ||
+            errorMessage?.includes('rate limit');
+
+        if (isRetryable && retryCount < MAX_RETRIES) {
+            const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff: 1s, 2s, 4s
+            console.log(`Model overloaded, retrying in ${delay}ms... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return generateResponse(messages, retryCount + 1);
+        }
 
         // Provide more specific error messages
         if (error.message?.includes('API key') || error.message?.includes('API_KEY')) {
@@ -141,9 +179,13 @@ const generateResponse = async (messages) => {
             throw new Error('API quota exceeded. Please try again later.');
         } else if (error.message?.includes('safety') || error.message?.includes('SAFETY')) {
             throw new Error('Response blocked due to safety settings. Please rephrase your question.');
+        } else if (error.message?.includes('not found') || error.message?.includes('404')) {
+            throw new Error('Model not found. Please check the model name configuration.');
+        } else if (error.status === 503 || error.message?.includes('overloaded')) {
+            throw new Error('AI service is currently busy. Please try again in a moment.');
         }
 
-        throw new Error('Failed to generate response from AI. Please try again.');
+        throw new Error(`Failed to generate response: ${error.message}`);
     }
 };
 

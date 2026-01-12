@@ -35,7 +35,7 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="col-span-2">
                         <Link to="/" className="flex items-center gap-2 mb-4">
-                            <img src="/logo.png" alt="Bit Brainic" className="w-8 h-8" />
+                            <img src="/log.jpeg" alt="Bit Brainic" className="w-8 h-8" />
                             <span className="text-xl font-bold gradient-text">Bit Brainic</span>
                         </Link>
                         <p className="text-secondary text-sm mb-4 max-w-xs">

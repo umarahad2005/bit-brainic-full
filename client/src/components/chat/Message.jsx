@@ -82,7 +82,7 @@ const Message = ({ message, isUser }) => {
                 {isUser ? (
                     <span className="text-sm font-semibold">U</span>
                 ) : (
-                    <img src="/logo.png" alt="Bot" className="w-6 h-6" />
+                    <img src="/log.jpeg" alt="Bot" className="w-6 h-6" />
                 )}
             </div>
 

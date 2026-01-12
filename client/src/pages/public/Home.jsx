@@ -122,7 +122,7 @@ const Home = () => {
                             </div>
                             <div className="p-6">
                                 <div className="flex gap-4 mb-4">
-                                    <img src="/logo.png" alt="Bot" className="w-10 h-10 rounded-full" />
+                                    <img src="/log.jpeg" alt="Bot" className="w-10 h-10 rounded-full" />
                                     <div className="flex-1 bg-tertiary rounded-2xl rounded-tl-none p-4">
                                         <p className="text-sm">
                                             Hello! I'm Bit Brainic, your CS tutor. How can I help you today?

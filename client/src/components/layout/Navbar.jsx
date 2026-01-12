@@ -26,7 +26,7 @@ const Navbar = () => {
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2">
                         <motion.img
-                            src="/logo.png"
+                            src="/log.jpeg"
                             alt="Bit Brainic"
                             className="w-8 h-8"
                             whileHover={{ rotate: 10 }}

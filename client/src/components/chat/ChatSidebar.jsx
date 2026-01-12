@@ -10,7 +10,7 @@ const ChatSidebar = ({ chats, currentChatId, onSelectChat, onNewChat, onDeleteCh
             {/* Header */}
             <div className="p-4 border-b border-theme">
                 <div className="flex items-center gap-2 mb-4">
-                    <img src="/logo.png" alt="Bit Brainic" className="w-8 h-8" />
+                    <img src="/log.jpeg" alt="Bit Brainic" className="w-8 h-8" />
                     <span className="font-bold gradient-text">Bit Brainic</span>
                 </div>
                 <motion.button

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Sparkles } from 'lucide-react';
 import Message from './Message';
@@ -7,16 +7,44 @@ import QuickReplies from '../ui/QuickReplies';
 
 const ChatPanel = ({ messages, onSendMessage, isLoading, isTyping }) => {
     const [input, setInput] = useState('');
+    const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
     const messagesEndRef = useRef(null);
+    const lastBotMessageRef = useRef(null);
     const inputRef = useRef(null);
+    const prevIsTypingRef = useRef(false);
 
-    const scrollToBottom = () => {
+    const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
+    }, []);
+
+    const scrollToLastBotMessage = useCallback(() => {
+        // Scroll to the start of the last bot message, not the end
+        if (lastBotMessageRef.current) {
+            lastBotMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, []);
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages, isTyping]);
+        // Scroll to bottom when user sends a message (isTyping becomes true)
+        if (isTyping && !prevIsTypingRef.current) {
+            scrollToBottom();
+        }
+        // Scroll to start of bot message when bot finishes responding
+        else if (!isTyping && prevIsTypingRef.current) {
+            // Small delay to let the message render
+            setTimeout(scrollToLastBotMessage, 100);
+        }
+
+        prevIsTypingRef.current = isTyping;
+    }, [isTyping, scrollToBottom, scrollToLastBotMessage]);
+
+    // Also scroll to bottom when shouldScrollToBottom flag is set
+    useEffect(() => {
+        if (shouldScrollToBottom) {
+            scrollToBottom();
+            setShouldScrollToBottom(false);
+        }
+    }, [shouldScrollToBottom, scrollToBottom]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -52,7 +80,7 @@ const ChatPanel = ({ messages, onSendMessage, isLoading, isTyping }) => {
                             transition={{ duration: 0.3 }}
                         >
                             <div className="w-20 h-20 rounded-full accent-bg-light flex items-center justify-center mx-auto mb-6">
-                                <img src="/logo.png" alt="Bit Brainic" className="w-12 h-12" />
+                                <img src="/log.jpeg" alt="Bit Brainic" className="w-12 h-12" />
                             </div>
                             <h2 className="text-2xl font-bold mb-2">Welcome to Bit Brainic!</h2>
                             <p className="text-secondary mb-8 max-w-md">
@@ -80,13 +108,21 @@ const ChatPanel = ({ messages, onSendMessage, isLoading, isTyping }) => {
                     // Messages list
                     <>
                         <AnimatePresence>
-                            {messages.map((message) => (
-                                <Message
-                                    key={message._id || message.timestamp}
-                                    message={message}
-                                    isUser={message.role === 'user'}
-                                />
-                            ))}
+                            {messages.map((message, index) => {
+                                const isLastBotMessage = message.role === 'bot' &&
+                                    index === messages.length - 1;
+                                return (
+                                    <div
+                                        key={message._id || message.timestamp}
+                                        ref={isLastBotMessage ? lastBotMessageRef : null}
+                                    >
+                                        <Message
+                                            message={message}
+                                            isUser={message.role === 'user'}
+                                        />
+                                    </div>
+                                );
+                            })}
                         </AnimatePresence>
 
                         {/* Show quick replies after bot messages */}
@@ -109,7 +145,7 @@ const ChatPanel = ({ messages, onSendMessage, isLoading, isTyping }) => {
                 {isTyping && (
                     <div className="flex gap-3">
                         <div className="w-8 h-8 rounded-full bg-tertiary flex items-center justify-center">
-                            <img src="/logo.png" alt="Bot" className="w-6 h-6" />
+                            <img src="/log.jpeg" alt="Bot" className="w-6 h-6" />
                         </div>
                         <div className="bg-secondary border border-theme rounded-2xl rounded-tl-none">
                             <TypingIndicator />
@@ -137,8 +173,8 @@ const ChatPanel = ({ messages, onSendMessage, isLoading, isTyping }) => {
                             type="submit"
                             disabled={!input.trim() || isTyping}
                             className={`absolute right-2 p-2 rounded-lg transition-colors ${input.trim() && !isTyping
-                                    ? 'accent-bg text-white'
-                                    : 'bg-tertiary text-muted cursor-not-allowed'
+                                ? 'accent-bg text-white'
+                                : 'bg-tertiary text-muted cursor-not-allowed'
                                 }`}
                             whileHover={input.trim() && !isTyping ? { scale: 1.05 } : {}}
                             whileTap={input.trim() && !isTyping ? { scale: 0.95 } : {}}

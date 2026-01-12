@@ -42,7 +42,7 @@ const SignIn = () => {
                 {/* Header */}
                 <div className="text-center mb-8">
                     <Link to="/" className="inline-flex items-center gap-2 mb-6">
-                        <img src="/logo.png" alt="Bit Brainic" className="w-10 h-10" />
+                        <img src="/log.jpeg" alt="Bit Brainic" className="w-10 h-10" />
                         <span className="text-2xl font-bold gradient-text">Bit Brainic</span>
                     </Link>
                     <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
