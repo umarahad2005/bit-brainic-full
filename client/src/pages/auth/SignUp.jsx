@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Home } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const SignUp = () => {
@@ -36,7 +36,7 @@ const SignUp = () => {
 
         try {
             await register(formData.name, formData.email, formData.password);
-            navigate('/dashboard');
+            navigate('/interests');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to create account');
         } finally {
@@ -84,7 +84,7 @@ const SignUp = () => {
                                     onChange={handleChange}
                                     required
                                     className="input pl-11"
-                                    placeholder="John Doe"
+                                    placeholder="Hassan Ali"
                                 />
                             </div>
                         </div>
@@ -176,6 +176,14 @@ const SignUp = () => {
                             Sign in
                         </Link>
                     </div>
+
+                    <Link
+                        to="/"
+                        className="mt-4 flex items-center justify-center gap-2 text-sm text-muted hover:text-primary transition-colors"
+                    >
+                        <Home className="w-4 h-4" />
+                        Back to Home
+                    </Link>
                 </div>
             </motion.div>
         </div>

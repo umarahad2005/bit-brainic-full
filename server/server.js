@@ -7,6 +7,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import chatRoutes from './routes/chat.js';
 import adminRoutes from './routes/admin.js';
+import contactRoutes from './routes/contact.js';
 
 // Get directory name for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -42,6 +43,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

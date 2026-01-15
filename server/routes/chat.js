@@ -97,8 +97,8 @@ router.post('/:id/message', async (req, res) => {
         const existingMessages = await Message.find({ chatId: chat._id })
             .sort({ timestamp: 1 });
 
-        // Generate AI response
-        const aiResponse = await generateResponse(existingMessages);
+        // Generate AI response with user's persona and interests
+        const aiResponse = await generateResponse(existingMessages, req.user);
 
         // Save bot message
         const botMessage = await Message.create({

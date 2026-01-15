@@ -24,6 +24,21 @@ const userSchema = new mongoose.Schema({
         minlength: 6,
         select: false
     },
+    interests: {
+        type: [String],
+        default: [],
+        validate: {
+            validator: function (v) {
+                return v.length <= 20; // Max 20 interests
+            },
+            message: 'Cannot have more than 20 interests'
+        }
+    },
+    persona: {
+        type: String,
+        default: '',
+        maxlength: [500, 'Persona prompt cannot be more than 500 characters']
+    },
     createdAt: {
         type: Date,
         default: Date.now

@@ -57,6 +57,26 @@ Never forget that your name is **BitBraniac** 🧠, and you must maintain this i
 Always keep your responses **educational, engaging, and fun** while staying strictly within the **Computer Science domain**.
 `;
 
+/**
+ * Build personalized system prompt with user's persona and interests
+ * @param {Object} user - User object with persona and interests
+ * @returns {string} - Personalized system prompt
+ */
+const buildPersonalizedPrompt = (user) => {
+    let prompt = SYSTEM_PROMPT;
+
+    if (user?.interests?.length > 0) {
+        prompt += `\n\n# USER'S INTERESTS:\nThis user is particularly interested in: ${user.interests.join(', ')}. ` +
+            `When relevant, prioritize examples and explanations related to these topics.`;
+    }
+
+    if (user?.persona?.trim()) {
+        prompt += `\n\n# USER'S CUSTOM INSTRUCTIONS:\n${user.persona}`;
+    }
+
+    return prompt;
+};
+
 // Maximum messages to keep in history (30 messages = 15 exchanges)
 const MAX_HISTORY_MESSAGES = 30;
 
@@ -101,10 +121,11 @@ const convertToGeminiHistory = (messages) => {
 /**
  * Generate AI response using Google Generative AI (new SDK)
  * @param {Array} messages - Array of message objects with role and content
+ * @param {Object} user - User object with persona and interests (optional)
  * @param {number} retryCount - Current retry attempt
  * @returns {Promise<string>} - AI generated response
  */
-const generateResponse = async (messages, retryCount = 0) => {
+const generateResponse = async (messages, user = null, retryCount = 0) => {
     const MAX_RETRIES = 3;
     const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash']; // Fallback models
 
@@ -134,12 +155,15 @@ const generateResponse = async (messages, retryCount = 0) => {
 
         console.log(`Sending message to Gemini (${selectedModel}) with`, history.length, 'messages in history');
 
+        // Build personalized system prompt
+        const personalizedPrompt = buildPersonalizedPrompt(user);
+
         // Create a chat session with history using new SDK
         const chat = ai.chats.create({
             model: selectedModel,
             history: history,
             config: {
-                systemInstruction: SYSTEM_PROMPT,
+                systemInstruction: personalizedPrompt,
                 maxOutputTokens: 8192,
                 temperature: 0.8,
             },
@@ -169,7 +193,7 @@ const generateResponse = async (messages, retryCount = 0) => {
             const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff: 1s, 2s, 4s
             console.log(`Model overloaded, retrying in ${delay}ms... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
             await new Promise(resolve => setTimeout(resolve, delay));
-            return generateResponse(messages, retryCount + 1);
+            return generateResponse(messages, user, retryCount + 1);
         }
 
         // Provide more specific error messages

@@ -14,9 +14,11 @@ import Contact from './pages/public/Contact';
 // Auth Pages
 import SignIn from './pages/auth/SignIn';
 import SignUp from './pages/auth/SignUp';
+import InterestSelection from './pages/auth/InterestSelection';
 
 // Dashboard Pages
 import Dashboard from './pages/dashboard/Dashboard';
+import Profile from './pages/dashboard/Profile';
 
 // Admin Pages
 import AdminPanel from './pages/admin/AdminPanel';
@@ -49,12 +51,32 @@ function App() {
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
 
+              {/* Interest selection (protected, no layout) */}
+              <Route
+                path="/interests"
+                element={
+                  <ProtectedRoute>
+                    <InterestSelection />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Protected dashboard route */}
               <Route
                 path="/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Protected profile route */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 }
               />

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Plus, MessageSquare, Trash2, LogOut } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, LogOut, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const ChatSidebar = ({ chats, currentChatId, onSelectChat, onNewChat, onDeleteChat, isLoading }) => {
@@ -43,8 +44,8 @@ const ChatSidebar = ({ chats, currentChatId, onSelectChat, onNewChat, onDeleteCh
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 className={`group flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-colors ${currentChatId === chat._id
-                                        ? 'accent-bg-light border border-[var(--accent)]'
-                                        : 'hover:bg-tertiary'
+                                    ? 'accent-bg-light border border-[var(--accent)]'
+                                    : 'hover:bg-tertiary'
                                     }`}
                                 onClick={() => onSelectChat(chat._id)}
                             >
@@ -78,6 +79,13 @@ const ChatSidebar = ({ chats, currentChatId, onSelectChat, onNewChat, onDeleteCh
                         <div className="font-medium text-sm truncate">{user?.name}</div>
                         <div className="text-xs text-muted truncate">{user?.email}</div>
                     </div>
+                    <Link
+                        to="/profile"
+                        className="p-2 rounded-lg hover:bg-tertiary text-muted hover:text-primary transition-colors"
+                        title="Settings"
+                    >
+                        <Settings className="w-4 h-4" />
+                    </Link>
                     <button
                         onClick={logout}
                         className="p-2 rounded-lg hover:bg-tertiary text-muted hover:text-primary transition-colors"

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send, MessageSquare } from 'lucide-react';
+import { chatApi } from '../../api';
+import api from '../../api/axios';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -19,31 +21,40 @@ const Contact = () => {
         e.preventDefault();
         setStatus({ type: 'loading', message: 'Sending...' });
 
-        // Simulate form submission
-        setTimeout(() => {
-            setStatus({ type: 'success', message: 'Thank you! We\'ll get back to you soon.' });
+        try {
+            const response = await api.post('/contact', formData);
+            setStatus({ type: 'success', message: response.data.message });
             setFormData({ name: '', email: '', subject: '', message: '' });
-        }, 1000);
+        } catch (error) {
+            setStatus({
+                type: 'error',
+                message: error.response?.data?.message || 'Failed to send message. Please try again.'
+            });
+        }
+    };
+
+    const handleWhatsAppChat = () => {
+        window.open('https://wa.me/923334739757?text=Hi!%20I%20need%20help%20with%20Bit%20Brainic', '_blank');
     };
 
     const contactInfo = [
         {
             icon: Mail,
             title: 'Email',
-            value: 'hello@bitbrainic.com',
-            link: 'mailto:hello@bitbrainic.com'
+            value: 'umarahadusmani@gmail.com',
+            link: 'mailto:umarahadusmani@gmail.com'
         },
         {
             icon: Phone,
             title: 'Phone',
-            value: '+1 (555) 123-4567',
-            link: 'tel:+15551234567'
+            value: '+92 333 4739757',
+            link: 'tel:+923334739757'
         },
         {
             icon: MapPin,
             title: 'Address',
-            value: 'San Francisco, CA',
-            link: '#'
+            value: 'Riphah International University, Raiwind, Lahore',
+            link: 'https://maps.google.com/?q=Riphah+International+University+Raiwind+Lahore'
         }
     ];
 
@@ -82,6 +93,8 @@ const Contact = () => {
                             <a
                                 key={index}
                                 href={info.link}
+                                target={info.title === 'Address' ? '_blank' : undefined}
+                                rel={info.title === 'Address' ? 'noopener noreferrer' : undefined}
                                 className="flex items-start gap-4 p-4 rounded-xl bg-secondary hover:bg-tertiary transition-colors group"
                             >
                                 <div className="w-12 h-12 rounded-xl accent-bg-light flex items-center justify-center group-hover:accent-bg transition-colors">
@@ -94,14 +107,17 @@ const Contact = () => {
                             </a>
                         ))}
 
-                        <div className="mt-8 p-6 rounded-xl bg-gradient-to-br from-[var(--accent)] to-purple-600 text-white">
+                        <div className="mt-8 p-6 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white">
                             <MessageSquare className="w-8 h-8 mb-4" />
-                            <h3 className="font-semibold text-lg mb-2">Live Chat Support</h3>
+                            <h3 className="font-semibold text-lg mb-2">WhatsApp Support</h3>
                             <p className="text-sm opacity-90 mb-4">
-                                Need quick help? Chat with our support team!
+                                Need quick help? Chat with us on WhatsApp!
                             </p>
-                            <button className="px-4 py-2 bg-white text-[var(--accent)] rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
-                                Start Chat
+                            <button
+                                onClick={handleWhatsAppChat}
+                                className="px-4 py-2 bg-white text-green-600 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+                            >
+                                Chat on WhatsApp
                             </button>
                         </div>
                     </motion.div>
@@ -129,7 +145,7 @@ const Contact = () => {
                                             onChange={handleChange}
                                             required
                                             className="input"
-                                            placeholder="John Doe"
+                                            placeholder="Umar Ahmed"
                                         />
                                     </div>
                                     <div>
@@ -144,7 +160,7 @@ const Contact = () => {
                                             onChange={handleChange}
                                             required
                                             className="input"
-                                            placeholder="john@example.com"
+                                            placeholder="umar@example.com"
                                         />
                                     </div>
                                 </div>
@@ -183,8 +199,8 @@ const Contact = () => {
 
                                 {status.message && (
                                     <div className={`p-4 rounded-lg ${status.type === 'success' ? 'bg-green-100 text-green-700' :
-                                            status.type === 'error' ? 'bg-red-100 text-red-700' :
-                                                'bg-blue-100 text-blue-700'
+                                        status.type === 'error' ? 'bg-red-100 text-red-700' :
+                                            'bg-blue-100 text-blue-700'
                                         }`}>
                                         {status.message}
                                     </div>
@@ -196,7 +212,7 @@ const Contact = () => {
                                     className="btn btn-primary w-full sm:w-auto"
                                 >
                                     <Send className="w-4 h-4 mr-2" />
-                                    Send Message
+                                    {status.type === 'loading' ? 'Sending...' : 'Send Message'}
                                 </button>
                             </form>
                         </div>

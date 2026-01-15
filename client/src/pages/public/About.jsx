@@ -1,7 +1,26 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Target, Users, Sparkles } from 'lucide-react';
+import { adminApi } from '../../api';
 
 const About = () => {
+    const [stats, setStats] = useState({
+        totalUsers: 0,
+        totalMessages: 0,
+        avgRating: '4.9'
+    });
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const response = await adminApi.getPublicStats();
+                setStats(response.data);
+            } catch (error) {
+                console.error('Failed to fetch stats:', error);
+            }
+        };
+        fetchStats();
+    }, []);
     const values = [
         {
             icon: Heart,
@@ -134,9 +153,9 @@ const About = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid sm:grid-cols-3 gap-8 text-center">
                         {[
-                            { value: '10K+', label: 'Students Learning' },
-                            { value: '50K+', label: 'Questions Answered' },
-                            { value: '4.9', label: 'Average Rating' }
+                            { value: stats.totalUsers.toLocaleString(), label: 'Students Learning' },
+                            { value: stats.totalMessages.toLocaleString(), label: 'Questions Answered' },
+                            { value: stats.avgRating, label: 'Average Rating' }
                         ].map((stat, index) => (
                             <motion.div
                                 key={index}
@@ -183,10 +202,12 @@ const About = () => {
                             transition={{ delay: 0.1 }}
                             className="card text-center"
                         >
-                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[var(--accent)] to-purple-600 p-1 mx-auto mb-4">
-                                <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-4xl font-bold text-[var(--accent)]">
-                                    U
-                                </div>
+                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[var(--accent)] to-purple-600 p-1 mx-auto mb-4 overflow-hidden">
+                                <img
+                                    src="/umar.jpeg"
+                                    alt="Umar Ahad Uddin Ahmed Usmani"
+                                    className="w-full h-full rounded-full object-cover"
+                                />
                             </div>
                             <h3 className="text-xl font-bold mb-1">Umar Ahad Uddin Ahmed Usmani</h3>
                             <p className="text-[var(--accent)] font-medium mb-3">Lead Developer</p>
@@ -203,10 +224,12 @@ const About = () => {
                             transition={{ delay: 0.2 }}
                             className="card text-center"
                         >
-                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[var(--accent)] to-purple-600 p-1 mx-auto mb-4">
-                                <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-4xl font-bold text-[var(--accent)]">
-                                    S
-                                </div>
+                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[var(--accent)] to-purple-600 p-1 mx-auto mb-4 overflow-hidden">
+                                <img
+                                    src="/syed.jpeg"
+                                    alt="Syed Hassan Raza"
+                                    className="w-full h-full rounded-full object-cover"
+                                />
                             </div>
                             <h3 className="text-xl font-bold mb-1">Syed Hassan Raza</h3>
                             <p className="text-[var(--accent)] font-medium mb-3">Co-Developer</p>

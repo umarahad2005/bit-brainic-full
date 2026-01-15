@@ -64,8 +64,22 @@ export const AuthProvider = ({ children }) => {
         navigate('/');
     };
 
+    // Update user data in context (for profile updates)
+    const updateUser = (userData) => {
+        setUser(prev => ({ ...prev, ...userData }));
+    };
+
     return (
-        <AuthContext.Provider value={{ user, token, loading, login, register, logout, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{
+            user,
+            token,
+            loading,
+            login,
+            register,
+            logout,
+            updateUser,
+            isAuthenticated: !!user
+        }}>
             {children}
         </AuthContext.Provider>
     );
