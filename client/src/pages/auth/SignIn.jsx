@@ -63,7 +63,7 @@ const SignIn = () => {
                                 Email Address
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+                                <Mail className="input-icon" />
                                 <input
                                     type="email"
                                     id="email"
@@ -82,7 +82,7 @@ const SignIn = () => {
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+                                <Lock className="input-icon" />
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     id="password"
@@ -96,7 +96,7 @@ const SignIn = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
+                                    className="input-icon-right"
                                 >
                                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                 </button>

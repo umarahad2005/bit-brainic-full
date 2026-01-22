@@ -7,7 +7,7 @@ const Footer = () => {
     const footerLinks = {
         product: [
             { label: 'Features', path: '/features' },
-            { label: 'Pricing', path: '/pricing' },
+            { label: 'Dashboard', path: '/dashboard' },
             { label: 'FAQ', path: '/faq' }
         ],
         company: [

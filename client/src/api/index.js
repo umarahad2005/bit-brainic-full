@@ -9,7 +9,9 @@ export const authApi = {
     updatePassword: (currentPassword, newPassword) => api.put('/auth/password', { currentPassword, newPassword }),
     updateInterests: (interests) => api.put('/auth/interests', { interests }),
     updatePersona: (persona) => api.put('/auth/persona', { persona }),
-    deleteAccount: () => api.delete('/auth/account')
+    deleteAccount: () => api.delete('/auth/account'),
+    forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+    resetPassword: (token, password) => api.post(`/auth/reset-password/${token}`, { password })
 };
 
 // Chat APIs

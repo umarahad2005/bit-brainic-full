@@ -1,0 +1,156 @@
+@startuml BitBrainic_UseCase_Clean
+
+' ============================================
+' BIT BRAINIC - CLEAN USE CASE DIAGRAM
+' Matching Reference Style Exactly
+' ============================================
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+skinparam usecase {
+    BackgroundColor #FF8C00
+    BorderColor #000080
+    FontColor #FFFFFF
+    FontStyle bold
+    BorderThickness 2
+}
+
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000080
+    FontColor #000080
+    FontStyle bold
+}
+
+skinparam rectangle {
+    BorderColor #000080
+    BorderThickness 2
+    BackgroundColor #FFFEF5
+    FontColor #000080
+    FontStyle bold
+}
+
+skinparam ArrowColor #FF8C00
+skinparam ArrowThickness 2
+
+title **Bit Brainic - Use Cases**
+
+' ============================================
+' PRIMARY ACTORS (LEFT)
+' ============================================
+
+actor "Guest" as Guest
+actor "User" as User
+
+' ============================================
+' SECONDARY ACTORS (RIGHT)
+' ============================================
+
+actor "Admin" as Admin
+actor "Gemini AI" as AI
+
+' ============================================
+' GENERALIZATION
+' ============================================
+
+Guest <|-- User
+User <|-- Admin
+
+' ============================================
+' SYSTEM BOUNDARY
+' ============================================
+
+rectangle "Bit Brainic System" {
+    
+    ' --- ROW 1: Registration & Auth ---
+    usecase "Register\nAccount" as UC1
+    usecase "Validate\nCredentials" as UC2
+    
+    ' --- ROW 2: Sign In ---
+    usecase "Sign In" as UC3
+    
+    ' --- ROW 3: Profile ---
+    usecase "Update\nProfile" as UC4
+    usecase "Select\nInterests" as UC5
+    
+    ' --- ROW 4: Chat Creation ---
+    usecase "Create\nNew Chat" as UC6
+    usecase "Set Persona\nPrompt" as UC7
+    
+    ' --- ROW 5: Messaging ---
+    usecase "Send\nMessage" as UC8
+    usecase "Generate AI\nResponse" as UC9
+    
+    ' --- ROW 6: Chat Management ---
+    usecase "View All\nChats" as UC10
+    usecase "Build\nPersonalized Prompt" as UC11
+    
+    ' --- ROW 7: View Chat ---
+    usecase "Open\nChat" as UC12
+    usecase "Manage Chat\nHistory" as UC13
+    
+    ' --- ROW 8: Admin ---
+    usecase "View\nStatistics" as UC14
+    usecase "List All\nUsers" as UC15
+    
+    ' --- ROW 9: Admin Detail ---
+    usecase "View User\nDetails" as UC16
+    usecase "Delete\nUser" as UC17
+}
+
+' ============================================
+' GUEST ASSOCIATIONS
+' ============================================
+
+Guest --> UC1
+Guest --> UC3
+
+' ============================================
+' USER ASSOCIATIONS
+' ============================================
+
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC8
+User --> UC10
+User --> UC12
+
+' ============================================
+' ADMIN ASSOCIATIONS
+' ============================================
+
+UC14 <-- Admin
+UC15 <-- Admin
+
+' ============================================
+' AI ASSOCIATIONS
+' ============================================
+
+UC9 <-- AI
+UC11 <-- AI
+UC13 <-- AI
+
+' ============================================
+' <<INCLUDE>> RELATIONSHIPS
+' ============================================
+
+UC1 .right.> UC2 : <<include>>
+UC3 .right.> UC2 : <<include>>
+UC8 .right.> UC9 : <<include>>
+UC9 .right.> UC11 : <<include>>
+UC9 .down.> UC13 : <<include>>
+UC15 .down.> UC16 : <<include>>
+
+' ============================================
+' <<EXTEND>> RELATIONSHIPS
+' ============================================
+
+UC5 .left.> UC1 : <<extend>>
+UC7 .left.> UC4 : <<extend>>
+UC12 .up.> UC10 : <<extend>>
+UC17 .left.> UC15 : <<extend>>
+
+@enduml

@@ -10,11 +10,17 @@ import Home from './pages/public/Home';
 import Features from './pages/public/Features';
 import About from './pages/public/About';
 import Contact from './pages/public/Contact';
+import Terms from './pages/public/Terms';
+import Privacy from './pages/public/Privacy';
+import FAQ from './pages/public/FAQ';
+import Careers from './pages/public/Careers';
 
 // Auth Pages
 import SignIn from './pages/auth/SignIn';
 import SignUp from './pages/auth/SignUp';
 import InterestSelection from './pages/auth/InterestSelection';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 // Dashboard Pages
 import Dashboard from './pages/dashboard/Dashboard';
@@ -45,11 +51,17 @@ function App() {
                 <Route path="/features" element={<Features />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/careers" element={<Careers />} />
               </Route>
 
               {/* Auth routes (no layout) */}
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
 
               {/* Interest selection (protected, no layout) */}
               <Route
