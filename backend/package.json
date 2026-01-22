@@ -1,5 +1,5 @@
 {
-  "name": "bit-brainic-backend",
+  "name": "server",
   "version": "1.0.0",
   "description": "Bit Brainic - Your CS Tutor API Server",
   "main": "server.js",
